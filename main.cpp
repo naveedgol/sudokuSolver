@@ -2,14 +2,16 @@
 
 using namespace std;
 
-void printTable(int [9][9]);
-bool isRowConflicting(int [9][9], int, int);
-bool isColumnConflicting(int [9][9], int, int);
-bool isBoxConflicting(int [9][9], int, int, int);
-void solveTable(int [9][9]);
-int blankCounter(int [9][9]);
-bool isValid(int [9][9], int, int, int);
+#define BLANK 0
+#define D 9 //square dimension of table
 
+void printTable(int [D][D]);
+bool isRowConflicting(int [D][D], int, int);
+bool isColumnConflicting(int [D][D], int, int);
+bool isBoxConflicting(int [D][D], int, int, int);
+bool solveTable(int [D][D]);
+int blankCounter(int [D][D]);
+bool isValid(int [D][D], int, int, int);
 
 int main() {
     
@@ -29,7 +31,7 @@ int main() {
      {9,1,2, 3,4,5, 6,7,8}
      };*/
     
-    int table[9][9]=
+    int table[D][D]=
     {
         {0,2,3, 4,5,6, 0,8,9},
         {4,0,6, 7,8,9, 0,2,3},
@@ -44,17 +46,27 @@ int main() {
         {9,1,2, 3,4,5, 0,0,0}
     };
     
+    cout<<"ORIGINAL TABLE"<<endl;
     printTable(table);
-    solveTable(table);
-    printTable(table);
+    if(solveTable(table))
+    {
+        cout<<"SUCCESSFUL SIMPLE SOLVE"<<endl;
+        printTable(table);
+    }
+    else
+    {
+        cout<<"UNSUCCESSFUL SIMPLE SOLVE"<<endl;
+        printTable(table);
+    }
     return 0;
 }
 
-void printTable(int table[9][9])
+void printTable(int table[D][D])
 {
-    for(int r=0;r<9;r++)
+    cout<<endl;
+    for(int r=0;r<D;r++)
     {
-        for(int c=0;c<9;c++)
+        for(int c=0;c<D;c++)
         {
             if(c==3 or c==6)
                 cout<<"|";
@@ -67,9 +79,9 @@ void printTable(int table[9][9])
     cout<<endl;
 }
 
-bool isRowConflicting(int table[9][9], int row, int number)
+bool isRowConflicting(int table[D][D], int row, int number)
 {
-    for(int c=0;c<9;c++)
+    for(int c=D;c<D;c++)
     {
         if(table[row][c]==number)
             return true;
@@ -77,9 +89,9 @@ bool isRowConflicting(int table[9][9], int row, int number)
     return false;
 }
 
-bool isColumnConflicting(int table[9][9], int column, int number)
+bool isColumnConflicting(int table[D][D], int column, int number)
 {
-    for(int r=0;r<9;r++)
+    for(int r=D;r<D;r++)
     {
         if(table[r][column]==number)
             return true;
@@ -87,7 +99,7 @@ bool isColumnConflicting(int table[9][9], int column, int number)
     return false;
 }
 
-bool isBoxConflicting(int table[9][9], int column, int row, int number)
+bool isBoxConflicting(int table[D][D], int column, int row, int number)
 {
     int boxRow=(row)/3; //0,1,2 -> 0; 3,4,5 -> 1; 6,7,8 ->2;
     int boxColumn=(column)/3;
@@ -102,37 +114,34 @@ bool isBoxConflicting(int table[9][9], int column, int row, int number)
     return false;
 }
 
-bool isValid(int table[9][9], int column, int row, int number)
+bool isValid(int table[D][D], int column, int row, int number)
 {
     if(isRowConflicting(table, row, number) || isColumnConflicting(table, column, number) || isBoxConflicting(table, column, row, number))
         return false;
     return true;
 }
 
-int blankCounter(int table[9][9])
+int blankCounter(int table[D][D])
 {
     int blanks=0;
-    for(int r=0;r<9;r++)
-        for(int c=0;c<9;c++)
-            if(table[r][c]==0)
+    for(int r=0;r<D;r++)
+        for(int c=0;c<D;c++)
+            if(table[r][c]==BLANK)
                 blanks++;
     return blanks;
 }
 
-void solveTable(int table[9][9])
+bool solveTable(int table[D][D])
 {
     bool ineffectiveCycle=false;
     int blanks=blankCounter(table);
     while(blanks>0)
     {
         if(ineffectiveCycle)
+            return false;
+        for(int r=0;r<D;r++)
         {
-            cout<<"Simple solve impossible"<<endl;
-            return;
-        }
-        for(int r=0;r<9;r++)
-        {
-            for(int c=0;c<9;c++)
+            for(int c=0;c<D;c++)
             {
                 if(table[r][c]==0)
                 {
@@ -150,7 +159,7 @@ void solveTable(int table[9][9])
                             }
                             else
                             {
-                                table[r][c]=0;
+                                table[r][c]=BLANK;
                                 blanks++;
                                 ineffectiveCycle=true;
                                 break;
@@ -161,4 +170,5 @@ void solveTable(int table[9][9])
             }
         }
     }
+    return true;
 }
