@@ -1,18 +1,7 @@
 #include <iostream>
+#include "sudokuSolver.h"
 
 using namespace std;
-
-#define BLANK 0
-#define D 9 //square dimension of table
-
-void printTable(int [D][D]);
-bool isRowConflicting(int [D][D], int, int);
-bool isColumnConflicting(int [D][D], int, int);
-bool isBoxConflicting(int [D][D], int, int, int);
-bool solveTable(int [D][D]);
-int blankCounter(int [D][D]);
-bool isValid(int [D][D], int, int, int);
-bool backTrackSolve(int [D][D]);
 
 int main() {
     
@@ -49,7 +38,7 @@ int main() {
     
     cout<<"ORIGINAL TABLE"<<endl;
     printTable(table);
-    if(solveTable(table))
+    if(intuitiveSolve(table))
     {
         cout<<"SUCCESSFUL SIMPLE SOLVE"<<endl;
         printTable(table);
@@ -90,48 +79,6 @@ void printTable(int table[D][D])
     cout<<endl;
 }
 
-bool isRowConflicting(int table[D][D], int row, int number)
-{
-    for(int c=0;c<D;c++)
-    {
-        if(table[row][c]==number)
-            return true;
-    }
-    return false;
-}
-
-bool isColumnConflicting(int table[D][D], int column, int number)
-{
-    for(int r=0;r<D;r++)
-    {
-        if(table[r][column]==number)
-            return true;
-    }
-    return false;
-}
-
-bool isBoxConflicting(int table[D][D], int column, int row, int number)
-{
-    int boxRow=(row)/3; //0,1,2 -> 0; 3,4,5 -> 1; 6,7,8 ->2;
-    int boxColumn=(column)/3;
-    for(int r=boxRow*3;r<boxRow*3+3;r++)
-    {
-        for(int c=boxColumn*3;c<boxColumn*3+3;c++)
-        {
-            if(table[r][c]==number)
-                return true;
-        }
-    }
-    return false;
-}
-
-bool isValid(int table[D][D], int column, int row, int number)
-{
-    if(isRowConflicting(table, row, number) || isColumnConflicting(table, column, number) || isBoxConflicting(table, column, row, number))
-        return false;
-    return true;
-}
-
 int blankCounter(int table[D][D])
 {
     int blanks=0;
@@ -142,7 +89,7 @@ int blankCounter(int table[D][D])
     return blanks;
 }
 
-bool solveTable(int table[D][D])
+bool intuitiveSolve(int table[D][D])
 {
     bool ineffectiveCycle=false;
     int blanks=blankCounter(table);
@@ -188,13 +135,15 @@ bool backTrackSolve(int table[D][D])
 {
     if(blankCounter(table)==0)
         return true;
+    
     int tableCopy[D][D];
     memcpy(tableCopy, table, sizeof(int)*D*D);
-    if(solveTable(tableCopy))
+    if(intuitiveSolve(tableCopy))
     {
         memcpy(table, tableCopy, sizeof(int)*D*D);
         return true;
     }
+    
     for(int r=0;r<D;r++)
     {
         for(int c=0;c<D;c++)
