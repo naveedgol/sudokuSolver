@@ -188,6 +188,13 @@ bool backTrackSolve(int table[D][D])
 {
     if(blankCounter(table)==0)
         return true;
+    int tableCopy[D][D];
+    memcpy(tableCopy, table, sizeof(int)*D*D);
+    if(solveTable(tableCopy))
+    {
+        memcpy(table, tableCopy, sizeof(int)*D*D);
+        return true;
+    }
     for(int r=0;r<D;r++)
     {
         for(int c=0;c<D;c++)
