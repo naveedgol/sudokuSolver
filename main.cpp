@@ -12,11 +12,12 @@ bool isBoxConflicting(int [D][D], int, int, int);
 bool solveTable(int [D][D]);
 int blankCounter(int [D][D]);
 bool isValid(int [D][D], int, int, int);
+bool backTrackSolve(int [D][D]);
 
 int main() {
     
     /*
-     int table[9][9]=
+     int table[D][D]=
      {
      {1,2,3, 4,5,6, 7,8,9},
      {4,5,6, 7,8,9, 1,2,3},
@@ -33,17 +34,17 @@ int main() {
     
     int table[D][D]=
     {
-        {0,2,3, 4,5,6, 0,8,9},
-        {4,0,6, 7,8,9, 0,2,3},
-        {7,8,0, 1,2,3, 0,5,0},
+        {0,0,0, 0,0,0, 0,0,0},
+        {0,0,0, 0,0,0, 0,0,0},
+        {0,0,0, 1,2,3, 4,5,0},
         
-        {2,3,4, 0,6,7, 0,9,0},
-        {5,6,7, 8,0,1, 0,3,0},
-        {8,9,1, 2,3,0, 0,0,0},
+        {0,0,0, 0,6,7, 8,9,0},
+        {0,0,0, 8,0,1, 2,3,4},
+        {0,0,0, 2,3,0, 5,0,7},
         
-        {3,4,5, 6,7,8, 0,0,0},
-        {6,7,8, 9,1,2, 0,0,0},
-        {9,1,2, 3,4,5, 0,0,0}
+        {0,0,0, 0,7,8, 9,1,2},
+        {0,0,0, 9,0,2, 3,0,5},
+        {0,0,0, 3,4,5, 6,7,8}
     };
     
     cout<<"ORIGINAL TABLE"<<endl;
@@ -57,6 +58,16 @@ int main() {
     {
         cout<<"UNSUCCESSFUL SIMPLE SOLVE"<<endl;
         printTable(table);
+        if(backTrackSolve(table))
+        {
+            cout<<"SOLVED"<<endl;
+            printTable(table);
+        }
+        else
+        {
+            cout<<"UNSOLVABLE"<<endl;
+            printTable(table);
+        }
     }
     return 0;
 }
@@ -171,4 +182,30 @@ bool solveTable(int table[D][D])
         }
     }
     return true;
+}
+
+bool backTrackSolve(int table[D][D])
+{
+    if(blankCounter(table)==0)
+        return true;
+    for(int r=0;r<D;r++)
+    {
+        for(int c=0;c<D;c++)
+        {
+            if(table[r][c]==BLANK)
+            {
+                for(int n=1;n<=9;n++)
+                {
+                    if(isValid(table, c, r, n))
+                    {
+                        table[r][c]=n;
+                        if(backTrackSolve(table))
+                            return true;
+                        table[r][c]=BLANK;
+                    }
+                }
+            }
+        }
+    }
+    return false;
 }
