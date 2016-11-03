@@ -81,7 +81,7 @@ void printTable(int table[D][D])
 
 bool isRowConflicting(int table[D][D], int row, int number)
 {
-    for(int c=D;c<D;c++)
+    for(int c=0;c<D;c++)
     {
         if(table[row][c]==number)
             return true;
@@ -91,7 +91,7 @@ bool isRowConflicting(int table[D][D], int row, int number)
 
 bool isColumnConflicting(int table[D][D], int column, int number)
 {
-    for(int r=D;r<D;r++)
+    for(int r=0;r<D;r++)
     {
         if(table[r][column]==number)
             return true;
